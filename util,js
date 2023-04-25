@@ -1,0 +1,38 @@
+/**
+ * @type {function (number, number): boolean} 
+ */
+const outTime = (time, min) => {
+    let now = Date.now() / 1000;
+    console.log(now - time)
+    return now - time > min * 60
+}
+/**
+ * @type {function ({id:number,msgs:{role:string,content:string}[]}[], number): {id:number,msgs:{role:string,content:string}[]}} 
+ */
+const addWithId = (list, id) => {
+    let item = { id: id, msgs: [] }
+    list.push(item)
+    return item
+}
+
+/**
+ * @type {function ({id:number,msgs:{role:string,content:string}[]}[], number): {id:number,msgs:{role:string,content:string}[]}} 
+ */
+const findById = (list, id) => {
+    for (let i in list) {
+        if (list[i].id == id) return list[i];
+    }
+    return addWithId(list,id)
+}
+
+/**
+ * @type {function ({id:number,msgs:{role:string,content:string}[]}[], number)} 
+ */
+const deleteById = (list, id) => {
+    for (let i in list) {
+        if (list[i].id == id) {
+            list.splice(i, 1)
+        }
+    }
+}
+module.exports = { outTime, findById, addWithId, deleteById }
