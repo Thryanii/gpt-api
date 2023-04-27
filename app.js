@@ -1,12 +1,13 @@
 const request = require('request')
 const chat = require('./chat.js')
-const util = require('./util.js')
+const utils = require('./util,js')
 const express = require('express')
 const app = express();
 
 //const proxy = 'http://165.154.243.62:3888'
 const proxy = 'http://127.0.0.1:7890'
-let keys = ["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",
+let keys = ["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",
+    "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",
     "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",
     "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",
     "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",
@@ -32,7 +33,7 @@ app.all('*', function (req, res, next) {
  */
 let list = []
 //[
-//  {id:111,msg:[{},{}]}
+//  {id:111,msgs:[{},{}]}
 //]
 
 app.post('/withContext', async (req, res) => {
@@ -40,11 +41,17 @@ app.post('/withContext', async (req, res) => {
         res.end("数据请求错误")
         return;
     }
-    console.log("context id:" + req.body.id + "; " + req.body.message)
+    /**
+    * @type {number}
+    */
+    let id = req.body.id
+    console.log("context id:" + id + "; " + req.body.message)
     let key = keys[0]
-    let item = util.findById(req.body.id)
-    let re = await chat.sendMessageContext(key, msgs, req.body.message)
-    res.end(msgs[msgs.length - 1].content)
+
+    let item = utils.findById(list, id)
+
+    let re = await chat.sendMessageContext(key, item.msgs, req.body.message)
+    res.end(item.msgs[item.msgs.length - 1].content)
 });
 app.post('/', async (req, res) => {
     if (req.body.message == undefined) {
