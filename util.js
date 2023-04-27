@@ -5,12 +5,13 @@ const outTime = (time, min) => {
     let now = Date.now();
     return now - time > min * 60 * 1000
 }
+
 /**
  * @type {function ({id:number,time:number,msgs:{role:string,content:string}[]}[], number): {id:number,msgs:{role:string,content:string}[]}} 
  */
 const addWithId = (list, id) => {
     let item = { id: id, msgs: [] }
-    console.log("create id: "+id)
+    console.log("create id: " + id)
     list.push(item)
     return item
 }
@@ -19,18 +20,19 @@ const addWithId = (list, id) => {
  * @type {function ({id:number,time:number,msgs:{role:string,content:string}[]}[], number): {id:number,msgs:{role:string,content:string}[]}} 
  */
 const findById = (list, id) => {
-    for (let i in list) {
-        if(outTime(list[i].time,1)){
-            console.log("delete id:"+list[i].id)
-            deleteById(list,list[i].id)
+    for (let i = 0; i < list.length; i++) {
+        if (outTime(list[i].time, 10)) {
+            console.log("delete id:" + list[i].id)
+            deleteById(list, list[i].id)
+            i -= 1
             continue
         }
-        if (list[i].id == id){
+        if (list[i].id == id) {
             list[i].time = Date.now()
             return list[i];
         }
     }
-    return addWithId(list,id)
+    return addWithId(list, id)
 }
 
 /**
@@ -43,4 +45,10 @@ const deleteById = (list, id) => {
         }
     }
 }
-module.exports = { outTime, findById, addWithId, deleteById }
+
+/**
+ * @type {function ([])} 
+ */
+const randomArray = (array) => array[Math.floor(Math.random() * array.length)]
+
+module.exports = { outTime, findById, addWithId, deleteById,randomArray }

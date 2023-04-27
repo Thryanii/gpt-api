@@ -7,7 +7,7 @@ const sendMessageSingle = async (key, msg) => await new Promise((resolve, reject
     let options = {
         method: "POST",
         json: true,
-        timeout: 2000,
+        timeout: 60000,
         headers: {
             "Authorization": "Bearer " + key
         },
@@ -31,7 +31,7 @@ const sendMessageJSON = async (key, msg) => await new Promise((resolve, reject) 
     let options = {
         method: "POST",
         json: true,
-        timeout: 16000,
+        timeout: 60000,
         headers: {
             "Authorization": "Bearer " + key
         },
@@ -50,28 +50,24 @@ const sendMessageJSON = async (key, msg) => await new Promise((resolve, reject) 
     })
 
 })
-const sendMessageContext = async (key, msgs, msg) => {
+const sendMessageContext = async (key, msgs, msg, info) => {
     let currentMsg = { role: "user", content: msg }
     let currentMsgs = JSON.parse(JSON.stringify(msgs))
+    if(info!=undefined) currentMsgs.push({role: "user", content: info})
     currentMsgs.push(currentMsg)
     let re = await sendMessageJSON(key, currentMsgs)
         .then(res => {
             let responseMsg = res.choices[0].message
-            return responseMsg
+            return { "status message": "ok", "message": responseMsg }
         })
         .catch(err => {
-            if (err instanceof String && err.includes("Incorrect API key")) {
-                console.log("api失效 " + key)
-            } else {
-                console.log("未知错误" + err)
-            }
+            return { "status message": "err", "err": err }
         })
     if (re != undefined) {
         msgs.push(currentMsg)
         msgs.push(re)
-        return true
     }
-    return false
+    return re
 }
 //成功
 //{
@@ -95,4 +91,4 @@ const sendMessageContext = async (key, msgs, msg) => {
 //   }
 // }
 
-module.exports = { sendMessageSingle, sendMessageContext }
+module.exports = { sendMessageJSON, sendMessageContext }
