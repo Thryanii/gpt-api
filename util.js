@@ -51,4 +51,5 @@ const deleteById = (list, id) => {
  */
 const randomArray = (array) => array[Math.floor(Math.random() * array.length)]
 
+
 module.exports = { outTime, findById, addWithId, deleteById,randomArray }

@@ -40,6 +40,7 @@ const sendMessageJSON = async (key, msg) => await new Promise((resolve, reject) 
             messages: msg
         }
     }
+    console.log(options)
     request('https://api.openai-proxy.com/v1/chat/completions', options, (err, res, body) => {
         if (err) {
             reject(err)
@@ -58,15 +59,14 @@ const sendMessageContext = async (key, msgs, msg, info) => {
     let re = await sendMessageJSON(key, currentMsgs)
         .then(res => {
             let responseMsg = res.choices[0].message
-            return { "status message": "ok", "message": responseMsg }
+            msgs.push(currentMsg)
+            msgs.push(responseMsg)
+            return { "status": "ok", "message": responseMsg.content }
         })
         .catch(err => {
-            return { "status message": "err", "err": err }
+            if(err.indexOf("Incorrect API key")!=-1) return { "status": "err", "err": "API KEY 失效 " + key }
+            return { "status": "err", "err": err+"\nkey:"+key }
         })
-    if (re != undefined) {
-        msgs.push(currentMsg)
-        msgs.push(re)
-    }
     return re
 }
 //成功
